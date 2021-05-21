@@ -1,36 +1,42 @@
-﻿using InfoTrack.Tools.SEO.Models;
+﻿using InfoTrack.Tools.Domain.Interfaces;
+using InfoTrack.Tools.SEO.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using InfoTrack.Tools.Domain.Models;
+using Microsoft.Extensions.Primitives;
 
 namespace InfoTrack.Tools.SEO.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly ISearchEngineService _searchEngineService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, ISearchEngineService searchEngineService)
         {
             _logger = logger;
+            _searchEngineService = searchEngineService;
         }
 
         public IActionResult Index()
         {
-            return View();
+            return View(new SearchViewModel());
         }
 
         [HttpPost, ActionName("Search")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Search(SearchViewModel searchViewModel)
+        public async Task<IActionResult> Search(SearchViewModel searchViewModel, CancellationToken ct)
         {
             if (!ModelState.IsValid)
             {
                 return View("Index");
             }
+
+            var requestParameter = new SearchRequestParameter(searchViewModel.Keywords, searchViewModel.Url);
+            var result = await _searchEngineService.SearchAsync(requestParameter, ct);
 
            //todo validate search view model
            return View("Index");
