@@ -11,7 +11,7 @@
 
   <ItemGroup>
 	<ProjectReference Include="..\InfoTrack.Tools.Domain\InfoTrack.Tools.Domain.csproj" />
-	<ProjectReference Include="..\InfoTrack.Tools.SEO\InfoTrack.Tools.SEO.csproj" />
+	<ProjectReference Include="..\InfoTrack.Tools.Http\InfoTrack.Tools.Http.csproj" />
 	<ProjectReference Include="..\InfoTrack.Tools.Services\InfoTrack.Tools.Services.csproj" />
   </ItemGroup>
 

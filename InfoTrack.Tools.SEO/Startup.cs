@@ -1,3 +1,5 @@
+using InfoTrack.Tools.Bootstrapper;
+using InfoTrack.Tools.Domain.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -11,14 +13,18 @@ namespace InfoTrack.Tools.SEO
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            SearchSettings = Configuration.GetSection("SearchSettings").Get<SearchSettings>();
         }
 
+        private static SearchSettings SearchSettings { get; set; }
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.RegisterAppServicesAndRepositories();
             services.AddControllersWithViews();
+            services.Add(new ServiceDescriptor(typeof(SearchSettings), SearchSettings));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

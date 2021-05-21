@@ -9,6 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\InfoTrack.Tools.Bootstrapper\InfoTrack.Tools.Bootstrapper.csproj" />
     <ProjectReference Include="..\InfoTrack.Tools.Domain\InfoTrack.Tools.Domain.csproj" />
   </ItemGroup>
 

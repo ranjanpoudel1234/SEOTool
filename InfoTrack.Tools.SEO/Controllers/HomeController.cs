@@ -32,13 +32,14 @@ namespace InfoTrack.Tools.SEO.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View("Index");
+                return View("Index", searchViewModel);
             }
 
             var requestParameter = new SearchRequestParameter(searchViewModel.Keywords, searchViewModel.Url);
-            var result = await _searchEngineService.SearchAsync(requestParameter, ct);
+            //var result = await _searchEngineService.SearchAsync(requestParameter, ct);
 
-           //todo validate search view model
+
+           //todo validate search view model and show the partial view after this.
            return View("Index");
 
         }
