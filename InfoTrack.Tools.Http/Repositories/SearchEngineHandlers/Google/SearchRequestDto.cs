@@ -19,8 +19,8 @@ namespace InfoTrack.Tools.Http.Repositories.SearchEngineHandlers.Google
         public string ApiKey { get; set; }
         public SearchPaginationRequest PaginationRequest { get; set; }
 
-        public SearchRequestDto(string searchQueryTerm, string apiKey, SearchPaginationRequest paginationRequest,
-            string apiContentType = "json", string apiRequestSource = "dotnet")
+        public SearchRequestDto(string searchQueryTerm, SearchPaginationRequest paginationRequest,
+            string apiContentType = "json", string apiRequestSource = "dotnet", string apiKey = null)
         {
             SearchQueryTerm = searchQueryTerm;
             ApiContentType = apiContentType;
@@ -29,15 +29,19 @@ namespace InfoTrack.Tools.Http.Repositories.SearchEngineHandlers.Google
             PaginationRequest = paginationRequest;
         }
 
-        public string BuildRequestEndpoint(string baseUrl)
+        public string BuildRequestEndpoint(string baseUrl, bool useApiCall = false)
         {
             var keyValue = new Dictionary<string, string>();
             keyValue.Add(SearchQueryTermKey, SearchQueryTerm);
             keyValue.Add(StartPageKey, PaginationRequest.StartPage);
             keyValue.Add(LimitKey, PaginationRequest.Limit);
-            keyValue.Add(ApiContentTypeKey, ApiContentType);
-            keyValue.Add(ApiRequestSourceKey, ApiRequestSource);
-            keyValue.Add(KeyForApiKey, ApiKey);
+
+            if (useApiCall)
+            {
+                keyValue.Add(ApiContentTypeKey, ApiContentType);
+                keyValue.Add(ApiRequestSourceKey, ApiRequestSource);
+                keyValue.Add(KeyForApiKey, ApiKey);
+            }
 
             var fullUrl = QueryHelpers.AddQueryString(baseUrl, keyValue);
             return fullUrl;

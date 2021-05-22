@@ -38,7 +38,6 @@ namespace InfoTrack.Tools.SEO.Controllers
             var requestParameter = new SearchRequestParameter(searchViewModel.Keywords, searchViewModel.Url);
             //var result = await _searchEngineService.SearchAsync(requestParameter, ct);
 
-
            //todo validate search view model and show the partial view after this.
            return View("Index");
 

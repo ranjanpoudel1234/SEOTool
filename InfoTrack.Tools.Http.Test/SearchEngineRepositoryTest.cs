@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using InfoTrack.Tools.Domain.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace InfoTrack.Tools.Http.Test
 {
@@ -31,7 +32,7 @@ namespace InfoTrack.Tools.Http.Test
 
         private ISearchEngineRepository GetDefaultSearchEngineRepository(List<ISearchEngineHandler> searchEngineHandlers = null)
         {
-            var googleSearchEngineHandlder = new GoogleSearchEngineHandler(A<SearchSettings>._);
+            var googleSearchEngineHandlder = new GoogleSearchEngineHandler(new SearchSettings {BaseUrl = "https://www.google.com/search" }, A.Dummy<ILoggerFactory>());
             var handlerList = searchEngineHandlers ?? new List<ISearchEngineHandler> { googleSearchEngineHandlder };
 
             return new SearchEngineRepository(handlerList);

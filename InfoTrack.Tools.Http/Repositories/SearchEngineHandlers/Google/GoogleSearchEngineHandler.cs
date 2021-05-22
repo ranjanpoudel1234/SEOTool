@@ -10,18 +10,19 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace InfoTrack.Tools.Http.Repositories.SearchEngineHandlers.Google
 {
     public class GoogleSearchEngineHandler : ISearchEngineHandler
     {
-        private readonly string _apiKey;
         private readonly string _baseUrl;
+        private readonly ILogger _logger;
 
-        public GoogleSearchEngineHandler(SearchSettings searchSettings)
+        public GoogleSearchEngineHandler(SearchSettings searchSettings, ILoggerFactory loggerFactory)
         {
-            _apiKey = searchSettings.ApiKey;
             _baseUrl = searchSettings.BaseUrl;
+            _logger = loggerFactory.CreateLogger(nameof(SearchEngineRepository));
         }
 
         public bool ShouldHandle(SearchSourceTypes searchSourceTypes)
@@ -33,40 +34,31 @@ namespace InfoTrack.Tools.Http.Repositories.SearchEngineHandlers.Google
         {
             try
             {
-                var endpoint = new SearchRequestDto(searchRequestParameter.Keywords,
-                    _apiKey, new SearchPaginationRequest()).BuildRequestEndpoint(_baseUrl);
+                var endpoint = new SearchRequestDto(searchRequestParameter.Keywords, new SearchPaginationRequest())
+                    .BuildRequestEndpoint(_baseUrl);
 
                 var client = new HttpClient();
 
-                var response = await client.GetAsync(endpoint, ct);
+                var response = new HttpResponseMessage();
+                await SimpleRetryHelper.RetryOnExceptionAsync(async () =>
+                {
+                    response = await client.GetAsync(endpoint, ct);
+
+                }, _logger);
                 response.EnsureSuccessStatusCode();
 
                 var responseBody = await response.Content.ReadAsStringAsync();
-                if(string.IsNullOrWhiteSpace(responseBody))
+                if (string.IsNullOrWhiteSpace(responseBody))
                     return Result.Failure<SearchResponse>(ErrorMessages.ResponseBodyIsEmpty);
 
-                var jObjectResult = JObject.Parse(responseBody);
-                var searchResultJToken = jObjectResult[SearchResultDto.ResultListKey];
-                if (searchResultJToken == null)
-                    return Result.Failure<SearchResponse>(ErrorMessages.ResponseBodyIsEmpty);
-                
-                var searchResultDtoList = searchResultJToken.ToObject<IList<SearchResultDto>>();
-                var searchResponse = new SearchResponse
-                {
-                    ResultPositions = searchResultDtoList
-                        .Where(x => x.Url.Contains(searchRequestParameter.Url,
-                            StringComparison.CurrentCultureIgnoreCase))
-                        .OrderBy(x => x.Order)
-                        .Select(x => x.Order)
-                        .ToList().ToList()
-                };
+                var searchResponse = GoogleSearchResultParser.GetSearchResponseFromHtml(responseBody, searchRequestParameter.Url);
 
                 return Result.Success(searchResponse);
 
             }
-            catch (HttpRequestException e)
+            catch (Exception ex)
             {
-                // log exception detail here using some logging helpers like Serilog
+                _logger.LogError($"Exception caught while handling GoogleSearchEngineHandler", ex);
                 return Result.Failure<SearchResponse>(ErrorMessages.FailureToLoadSearchResults);
             }
         }
