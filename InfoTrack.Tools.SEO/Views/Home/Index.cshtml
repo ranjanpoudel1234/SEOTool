@@ -1,4 +1,4 @@
-﻿@model InfoTrack.Tools.SEO.Models.SearchViewModel
+﻿@model InfoTrack.Tools.SEO.Models.SearchResultViewModel
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -9,14 +9,37 @@
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 <form asp-controller="Home" asp-action="Search" method="post">
     <div class="form-group">
-        <label asp-for="@Model.Keywords">Keywords to Search</label>
-        <input type="text" class="form-control" asp-for="@Model.Keywords" aria-describedby="keywords" placeholder="Enter keywords" >
-        <span asp-validation-for="@Model.Keywords" class="text-danger"></span>
+        <label asp-for="@Model.SearchCriteriaKeywords">Keywords to Search</label>
+        <input type="text" class="form-control" asp-for="@Model.SearchCriteriaKeywords" aria-describedby="keywords" placeholder="Enter keywords" >
+        <span asp-validation-for="@Model.SearchCriteriaKeywords" class="text-danger"></span>
     </div>
     <div class="form-group required">
-        <label asp-for="@Model.Url">Url to Search</label>
-        <input type="url" class="form-control" asp-for="@Model.Url" placeholder="Enter Url" >
-        <span asp-validation-for="@Model.Url" class="text-danger"></span>
+        <label asp-for="@Model.SearchCriteriaUrl">Url to Search</label>
+        <input type="url" class="form-control" asp-for="@Model.SearchCriteriaUrl" placeholder="Enter Url" >
+        <span asp-validation-for="@Model.SearchCriteriaUrl" class="text-danger"></span>
     </div>
     <button type="submit" class="btn btn-primary">Search</button>
+    <input type="button" class="btn btn-secondary" value="Clear" onclick="@("window.location.href='" + @Url.Action("Index", "Home") + "'");">
 </form>
+<br/>
+<br/>
+@if (Model.ResultRanks.Count > 0)
+{
+    <div class="row">
+        <div class="col-md-6">
+            <div class="list-group">
+
+                <button type="button" class="list-group-item list-group-item-action active">
+                    Result Rankings
+                </button>
+                @foreach (var result in Model.ResultRanks)
+                {
+                    <button type="button" class="list-group-item list-group-item-action">@result</button>
+                }
+
+            </div>
+        </div>
+       
+    </div>
+  
+}

@@ -8,6 +8,7 @@ namespace InfoTrack.Tools.SEO.Models
         public string Keywords { get; set; }
 
         [Required]
+        [Url]
         public string Url { get; set; }
     }
 }

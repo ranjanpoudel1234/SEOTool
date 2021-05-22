@@ -14,7 +14,7 @@ namespace InfoTrack.Tools.Http.Repositories.SearchEngineHandlers.Google
             var searchResponse = new SearchResponse
             {
                 ResultPositions = linkNodeWithPosition
-                    .Where(x => x.LinkTag.Contains(searchUrl, StringComparison.CurrentCultureIgnoreCase))
+                    .Where(x => x.LinkTag.Contains(searchUrl, StringComparison.CurrentCultureIgnoreCase) && x.IndexPosition <= SearchPaginationRequest.PageSize)
                     .OrderBy(x => x.IndexPosition)
                     .Select(x => x.IndexPosition)
                     .ToList()
@@ -28,10 +28,17 @@ namespace InfoTrack.Tools.Http.Repositories.SearchEngineHandlers.Google
             var htmlDocument = new HtmlDocument();
             htmlDocument.LoadHtml(html);
 
-            var linkNodeWithPosition = htmlDocument.DocumentNode.SelectNodes(".//div[@class='kCrYT']")
+            var linkNodeWithPosition = htmlDocument.DocumentNode.SelectNodes(".//div")
                 .Descendants("a")
-                .OrderBy(node => node.LinePosition)
-                .Select((row, index) => new GoogleSearchResult { LinkTag = row.GetAttributeValue("href", ""), IndexPosition = index + 1} );
+                .Where(link => link.ChildNodes.Any(x => x.Name == "h3"))
+                .Select((row, index) => new GoogleSearchResult { LinkTag = row.GetAttributeValue("href", ""), IndexPosition = index + 1 });
+
+            //Note: though this seemed to bring even better results, dont think we can rely on google class names
+            // as they are programatically generated.
+            //var linkNodeWithPosition2 = htmlDocument.DocumentNode.SelectNodes(".//div[@class='kCrYT']")
+            //    .Descendants("a")
+            //    .Where(link => link.Descendants("h3").Any(h3 => h3.HasClass("zBAuLc")))
+            //    .Select((row, index) => new GoogleSearchResult { LinkTag = row.GetAttributeValue("href", ""), IndexPosition = index + 1 });
 
 
             return linkNodeWithPosition;

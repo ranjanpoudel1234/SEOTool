@@ -23,24 +23,27 @@ namespace InfoTrack.Tools.SEO.Controllers
 
         public IActionResult Index()
         {
-            return View(new SearchViewModel());
+            return View(new SearchResultViewModel());
         }
 
         [HttpPost, ActionName("Search")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Search(SearchViewModel searchViewModel, CancellationToken ct)
+        public async Task<IActionResult> Search(SearchResultViewModel searchResultViewModel, CancellationToken ct)
         {
             if (!ModelState.IsValid)
             {
-                return View("Index", searchViewModel);
+                return View("Index", searchResultViewModel);
             }
 
-            var requestParameter = new SearchRequestParameter(searchViewModel.Keywords, searchViewModel.Url);
-            //var result = await _searchEngineService.SearchAsync(requestParameter, ct);
+            var requestParameter = new SearchRequestParameter(searchResultViewModel.SearchCriteriaKeywords, searchResultViewModel.SearchCriteriaUrl);
+            var searchResponseResult = await _searchEngineService.SearchAsync(requestParameter, ct);
 
-           //todo validate search view model and show the partial view after this.
-           return View("Index");
+            if (searchResponseResult.IsFailure)
+                return RedirectToAction("Error");
 
+            searchResultViewModel.ResultRanks = searchResponseResult.Value.ResultPositions;
+       
+           return View("Index", searchResultViewModel);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

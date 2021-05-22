@@ -28,7 +28,7 @@ namespace InfoTrack.Tools.Http.Test
         }
 
         private SearchRequestParameter GetDefaultRequestParameter =>
-            new SearchRequestParameter("efiling integration", "www.infotrack.com");
+            new SearchRequestParameter("carmax", "www.carmax.com");
 
         private ISearchEngineRepository GetDefaultSearchEngineRepository(List<ISearchEngineHandler> searchEngineHandlers = null)
         {
