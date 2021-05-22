@@ -9,7 +9,6 @@ namespace InfoTrack.Tools.SEO.Models
         public string SearchCriteriaKeywords { get; set; }
 
         [Required]
-        [Url]
         public string SearchCriteriaUrl { get; set; }
 
         public List<int> ResultRanks { get; set; } = new List<int>();

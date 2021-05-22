@@ -7,7 +7,7 @@ namespace InfoTrack.Tools.Http.Repositories.SearchEngineHandlers.Google
     public class SearchRequestDto
     {
         private const string SearchQueryTermKey = "q";
-        private const string SearchQueryTermOQKey = "oq";
+        private const string SearchQueryTermOqKey = "oq";
         private const string LanguageKey = "hl";
         private const string ApiContentTypeKey = "output";
         private const string ApiRequestSourceKey = "source";
@@ -37,7 +37,7 @@ namespace InfoTrack.Tools.Http.Repositories.SearchEngineHandlers.Google
         {
             var keyValue = new Dictionary<string, string>();
             keyValue.Add(SearchQueryTermKey, SearchQueryTerm);
-            keyValue.Add(SearchQueryTermOQKey, SearchQueryTerm);
+            keyValue.Add(SearchQueryTermOqKey, SearchQueryTerm);
             keyValue.Add(LanguageKey, SearchLanguageTerm);
             keyValue.Add(StartPageKey, PaginationRequest.StartPage);
             keyValue.Add(LimitKey, PaginationRequest.Limit);

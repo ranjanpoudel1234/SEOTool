@@ -15,7 +15,7 @@
     </div>
     <div class="form-group required">
         <label asp-for="@Model.SearchCriteriaUrl">Url to Search</label>
-        <input type="url" class="form-control" asp-for="@Model.SearchCriteriaUrl" placeholder="Enter Url" >
+        <input class="form-control" asp-for="@Model.SearchCriteriaUrl" placeholder="Enter Url" >
         <span asp-validation-for="@Model.SearchCriteriaUrl" class="text-danger"></span>
     </div>
     <button type="submit" class="btn btn-primary">Search</button>
@@ -42,4 +42,10 @@
        
     </div>
   
+}
+else
+{
+    <div class="text-center">
+        <h4>No results to display</h4>
+    </div>
 }

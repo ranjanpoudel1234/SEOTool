@@ -15,19 +15,9 @@ namespace InfoTrack.Tools.Http.Repositories.SearchEngineHandlers.Bing
             return searchSourceTypes == SearchSourceTypes.Bing;
         }
 
-        public List<SearchResponse> Handle(SearchRequestParameter searchRequestParameter)
-        {
-            // this class can be extended later when/if we want to support Bing search
-            throw new System.NotImplementedException();
-        }
-
         public Task<Result<SearchResponse>> HandleAsync(SearchRequestParameter searchRequestParameter, CancellationToken ct)
         {
-            throw new System.NotImplementedException();
-        }
-
-        public Task<List<SearchResponse>> HandleAsync(SearchRequestParameter searchRequestParameter)
-        {
+            // this class can be extended later when/if we want to support Bing search
             throw new System.NotImplementedException();
         }
     }
